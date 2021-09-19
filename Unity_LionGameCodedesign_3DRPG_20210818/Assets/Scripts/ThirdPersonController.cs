@@ -154,6 +154,20 @@ public class ThirdPersonController : MonoBehaviour
         print("傷害值:" + 200);
         print("技能特效");
     }
+    // ※ 非必要但很重要
+    //BMI = 體重 / 身高 * 身高 (公尺)
+    /// <summary>
+    /// 計算 BMI 方法
+    /// </summary>
+    /// <param name="weight">體重 單位為公斤</param>
+    /// <param name="height">身高 單位為公尺</param>
+    /// <param name="name">名稱 測試者名稱</param>
+    /// <returns>BMI 結果</returns>
+    private float BMI(float weight, float height, string name = "測試")
+    {
+        print(name + "的 BMI");
+        return weight / (height * height);
+    }
     #endregion
 
     #region  事件 Event
@@ -161,6 +175,8 @@ public class ThirdPersonController : MonoBehaviour
     //開始事件:遊戲開始時執行一次_處裏初始化，取的資料等等
     private void Start()
     {
+        print(BMI(61, 1.75f, "Rocky"));
+
         Skill100();
         Skill200();
         //呼叫有參數方法時 . 必須輸入有對應的引數
