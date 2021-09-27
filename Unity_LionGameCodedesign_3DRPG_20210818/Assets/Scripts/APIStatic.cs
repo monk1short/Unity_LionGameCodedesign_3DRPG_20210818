@@ -3,11 +3,13 @@ using UnityEngine;
 /// <summary>
 /// 
 /// </summary>
-public class APIStatic : MonoBehaviour
+/*public class APIStatic : MonoBehaviour
 {
     private void Start()
     {
         #region 靜態屬性
+        //與非靜態差異
+        //1. 不需要實體物件
         // 取得
         // 語法:
         // 類別名稱.靜態屬性
@@ -39,6 +41,12 @@ public class APIStatic : MonoBehaviour
     {
         #region 靜態屬性
         //print("經過多久:" + Time.timeSinceLevelLoad);
+        #endregion
+
+        #region  靜態方法
+        float h = Input.GetAxis("Horizontal");
+        print("水平值:" + h);
         #endregion 
     }
 }
+*/
