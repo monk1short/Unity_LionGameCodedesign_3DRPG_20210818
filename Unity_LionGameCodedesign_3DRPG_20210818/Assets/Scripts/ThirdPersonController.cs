@@ -35,6 +35,8 @@ public class ThirdPersonController : MonoBehaviour
     public string animatorParRun = "跑步開關";
     public string animatorParHurt = "受傷觸發";
     public string animatorParDead = "死亡開關";
+    public string animatorParJump = "跳躍觸發";
+    public string animatorParIsGrounded = "是否在地板上";
 
     private AudioSource aud;
     private Rigidbody rig;
@@ -115,8 +117,15 @@ public class ThirdPersonController : MonoBehaviour
     }
     */
 
+    // <summary>
+    /// 跳躍按鍵
+    /// </summary>
+    // c# 7.0 存取子 可以使用 Lambda => 運算子
+    // 語法: get => { 程式區塊 } - 單行可省略大括號
+    private bool keyJump { get => Input.GetKeyDown(KeyCode.Space);}
 
-    public KeyCode keyJump { get; }
+   
+
 
     #endregion
 
@@ -233,6 +242,8 @@ public class ThirdPersonController : MonoBehaviour
 
         //print("球體碰到的第一個物件:" + hits[0].name);
 
+        isGrounded = hits.Length > 0;
+
         //傳回 碰撞陣列數量 > 0 - 只要碰到指定圖層物件就代表在地面上
         return hits.Length > 0;
     
@@ -243,9 +254,52 @@ public class ThirdPersonController : MonoBehaviour
     /// </summary>
     private void Jump()
     {
-        print("是否在地面上:" + CheckGround());
+        //print("是否在地面上:" + CheckGround());
+
+        // 並且 &&
+        // 如果 在地面上 並且 按下空白建 就 跳躍
+        if (CheckGround() && Input.GetKeyDown(KeyCode.Space))
+        {
+            //剛體.添加推力(此物件的上方 * 跳躍);
+            //宜修翻譯:(給予方向 * 力道(jump已 public int 在欄位))
+            rig.AddForce(transform.up * jump);
+        }
     }
 
+    // <summary>
+    /// 更新動畫
+    /// </summary>
+    private void UpdateAnimation()
+    {
+        // 預期成果:
+        // 按下前或後時 將布林值設為true
+        // 沒有按時 將布林值設為 false
+        // Input
+        // if (選擇條件)
+        // != == 比較運算子 (選擇條件)
+        #region 宜修試做
+        /**if ( Input.GetKey(KeyCode.W )|| Input.GetKey(KeyCode.S ))
+       {
+           ani.SetBool(animatorParWalk, true);
+       }
+       else 
+       {
+           ani.SetBool(animatorParWalk, false );
+       }*/
+        #endregion
+        // 老師示範
+        // 當玩家往前或後移時 true
+        // 沒有按下前或後時 false
+        // 垂直值 不等於 0 就代表 true
+        // 垂直值 等於 0 就代表 false
+
+        // 前後不等於 0 或 左右不等於 0 都是走路
+        ani.SetBool(animatorParWalk, MoveInput("Vertical") != 0 || MoveInput("Horizontal") != 0);
+        //設定是否在地板上 動畫參數
+        ani.SetBool(animatorParIsGrounded, isGrounded);
+        // 如果 按下 跳躍鍵 就 設定跳躍觸發參數
+        // 判斷式 只有一行敘述(只有一個分號)可以省略 大括號
+    }
 
     #region  事件 Event
     //特定時間點會執行的方法，程式的入口 Start 等於 Console Main
@@ -320,8 +374,8 @@ public class ThirdPersonController : MonoBehaviour
     //處理持續性運動、移動物件、監聽玩家輸入按鍵
     private void Update()
     {
-        CheckGround();
         Jump();
+        UpdateAnimation();
     }
 
     // 固定更新事件:固定 0.02 秒執行一次 - 50 FPS
