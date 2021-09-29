@@ -19,6 +19,26 @@ public class ThirdPersonController : MonoBehaviour
     //Range 範圍:可使用在數值類型資料上，例如: int, float
     [Header("移動速度"), Tooltip("用來調整角色移動速度"), Range(1, 500)]
     public float speed = 10.5f;
+    [Header("跳躍高度"), Range(0, 1000)]
+    public int jump = 100;
+    [Header("檢查地面資料")]
+    [Tooltip("用來檢查角色是否在地面上")]
+    public bool isGrounded;
+    public Vector3 v3CheckGroundOffset;
+    [Range(0, 3)]
+    public float checkGroundRadius = 0.2f;
+    [Header("音效檔案")]
+    public AudioClip soundJump;
+    public AudioClip soundGround;
+    [Header("動畫參數")]
+    public string animatorParWalk = "走路開關";
+    public string animatorParRun = "跑步開關";
+    public string animatorParHurt = "受傷觸發";
+    public string animatorParDead = "死亡開關";
+
+    private AudioSource aud;
+    private Rigidbody rig;
+    private Animator ani;
 
     #region Unity 資料類型
     /**練習 Unity 資料類型
@@ -101,6 +121,30 @@ public class ThirdPersonController : MonoBehaviour
     #endregion
 
     #region  方法 Method
+    // 摺疊 ctrl + M O
+    // 展開 ctrl + M L
+    /// <summary>
+    /// 移動
+    /// </summary>
+    /// <param name="speedMove">移動速度</param>
+    private void Move(float speedMove)
+    {
+        // 請取消 Animator 屬性 Apply Root Motion:勾選時使用動畫位移資訊
+        // 剛體的加速度 = 三維向量 - 加速度用來控制剛體三個軸向的運動速度
+        // 前方 * 輸入值 * 移動速度
+        //使用前後左右軸向運動並保持原本的地心引力
+        rig.velocity = 
+            Vector3.forward * MoveInput("Vertical") * speedMove+
+            Vector3.right * MoveInput("Horizontal") * speedMove+
+            Vector3.up * rig.velocity.y;
+    }
+
+    private float MoveInput(string axisName)
+    {
+        return Input.GetAxis(axisName);
+    }
+
+
     //定義與實作較複雜程式的區塊，功能
     //方法語法:修飾詞 傳回資料類型 方法名稱 (參數1....參數N) { 程式區塊 }
     //常用回傳類型 : 無傳回 void - 此方法沒有傳回資料
@@ -172,6 +216,37 @@ public class ThirdPersonController : MonoBehaviour
 
     public GameObject playerObject;
 
+
+
+    /// <summary>
+    /// 檢查地板
+    /// </summary>
+    private bool CheckGround()
+    {
+        // 物理.覆蓋球體(中心點.半徑.圖層)
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position +
+            transform.right * v3CheckGroundOffset.x +
+            transform.up * v3CheckGroundOffset.y +
+            transform.forward * v3CheckGroundOffset.z,
+            checkGroundRadius, 1 << 3);
+
+        //print("球體碰到的第一個物件:" + hits[0].name);
+
+        //傳回 碰撞陣列數量 > 0 - 只要碰到指定圖層物件就代表在地面上
+        return hits.Length > 0;
+    
+    }
+
+    // <summary>
+    /// 跳躍
+    /// </summary>
+    private void Jump()
+    {
+        print("是否在地面上:" + CheckGround());
+    }
+
+
     #region  事件 Event
     //特定時間點會執行的方法，程式的入口 Start 等於 Console Main
     //開始事件:遊戲開始時執行一次_處裏初始化，取的資料等等
@@ -238,14 +313,38 @@ public class ThirdPersonController : MonoBehaviour
         rig = gameObject.GetComponent<Rigidbody>();
         //3. 取得元件<泛型>();
         //類別可以使用繼承列別(父類別)的成員，公開或保護 欄位、屬性與方法
-        ani = GetComponent<Animation>();
+        ani = GetComponent<Animator>();
     }
 
     //更新事件:一秒約執行 60 次. 60 FPS_Frame Per Second
     //處理持續性運動、移動物件、監聽玩家輸入按鍵
     private void Update()
     {
-        
+        CheckGround();
+        Jump();
+    }
+
+    // 固定更新事件:固定 0.02 秒執行一次 - 50 FPS
+    // 處理物理行為.例如:Rigidbody API
+    private void FixedUpdate()
+    {
+        Move(speed);
+    }
+
+    //繪製圖示事件
+    //在Unity Editor 內繪製圖示輔助開發 . 發布後會自動隱藏
+    private void OnDrawGizoms()
+    {
+        // 1. 指定顏色
+        // 2. 繪製圖形
+        Gizmos.color = new Color(1, 0, 0.2f, 0.3f);
+
+        // transform 與此腳本在同階層的 Transform 元件
+        Gizmos.DrawSphere(transform.position +
+            transform.right * v3CheckGroundOffset.x +
+            transform.up * v3CheckGroundOffset.y +
+            transform.forward * v3CheckGroundOffset.z,
+            checkGroundRadius);
     }
 
     #endregion 
