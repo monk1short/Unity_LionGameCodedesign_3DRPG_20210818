@@ -147,3 +147,4 @@ Received Import Request.
 Start importing Assets/ThirdPersonController/ThirdPersonCamera.cs using Guid(3990c7dea22c9444ea842379a207bbb3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c4a19016b02dbc15f6ce2786e340e753') in 0.004420 seconds 
   Import took 0.006542 seconds .
 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
