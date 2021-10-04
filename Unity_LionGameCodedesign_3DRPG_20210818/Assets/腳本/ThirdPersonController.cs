@@ -1,22 +1,11 @@
 using UnityEngine;
 using UnityEngine.Video;
 
+
 public class ThirdPersonController : MonoBehaviour
 {
     #region  欄位 Field
-    //儲存遊戲資料，例如:移動速度、跳躍高度等等...
-    //常用四大類型:整數 int、浮點數 float、字串 string、布林值 bool
-    //欄位語法:修飾詞 資料類型 欄位名稱 (指定 預設值) 結尾
-    //修飾詞:
-    //1.公開 public - 允許其他類別存取 - 顯示在屬性面板 - 需要調整的資料設為公開
-    //2.私人 private - 禁止其他類別存取 - 隱藏在屬性面板 - 預設值
-    //Unity以面板屬性為主
-    //恢復程式預設值請按...>Reset
-    //欄位屬性 Attribute : 輔助欄位資料
-    //欄位屬性語法:[屬性名稱(屬性值)]
-    //Header 標題
-    //Tooltip 提示 : 滑鼠停留在欄位名稱上會顯示彈出視窗
-    //Range 範圍:可使用在數值類型資料上，例如: int, float
+
     [Header("移動速度"), Tooltip("用來調整角色移動速度"), Range(1, 500)]
     public float speed = 10.5f;
     [Header("跳躍高度"), Range(0, 1000)]
@@ -43,105 +32,29 @@ public class ThirdPersonController : MonoBehaviour
     private Animator ani;
 
     #region Unity 資料類型
-    /**練習 Unity 資料類型
-    // 顏色 Color
-    public Color color;
-    public Color white = Color.white;             //內建顏色
-    public Color yellow = Color.yellow;
-    public Color color1 = new Color(0.5f, 0.5f, 0);          //自訂顏色 RGB
-    public Color color2 = new Color(0, 0.5f, 0.5f, 0.5f);         //自訂顏色 RGBA
 
-    // 座標 Vector 2 - 4
-    public Vector2 v2;
-    public Vector2 v2Right = Vector2.right;
-    public Vector2 v2Up = Vector2.up;
-    public Vector2 v2One = Vector2.one;
-    public Vector2 v2Custom = new Vector2(7.5f, 100.9f);
-    public Vector3 v3Forward = new Vector3(1, 2, 3);
-    public Vector4 v4 = new Vector4(1, 2, 3, 4);
-
-    //按鍵 列舉資料 enum
-    public KeyCode key;
-    public KeyCode move = KeyCode.W;
-    public KeyCode jump = KeyCode.Space;
-
-    //遊戲資料類型:不能指定預設值
-    //存放 Project 專案內的資料
-    public AudioClip sound;    //音效 mp3, ogg, wav
-    public VideoClip video;   //影片 MP4
-    public Sprite sprite;     //圖片 png, jepg - 不支援 gif
-    public Texture2D texture2D;   //2D 圖片 png, jpeg
-    public Material material;    //材質球
-
-    //元件 Componemt:屬性面板上可折疊的
-    public Transform tra;
-    public Animator aniNew;
     public Animation ainOld;
     public Light lig;
     public Camera cam;
-    
-    //綠色蚯蚓
-    //1.建議不要使用此名稱
-    //2.使用過時的 API
-    */
+
     #endregion
 
     #endregion
 
     #region  屬性 Property
-    /* 屬性練習
-    //屬性不會顯示在面板上
-    //儲存資料，與欄位相同
-    //差異在於:可以設定存取權限 Get Set
-    //屬性語法:修飾詞 資料類型 屬性名稱 { 取; 存;}
-    public int readAndWrite { get; set; }
-    //唯讀屬性:只能取得 get
-    public int read { get; }
-    //唯讀屬性:透過 get 設定預設值,關鍵字 return為傳回值
-    public int readValue
-    {
-        get
-        {
-            return 77;
-        }
-
-    }
-    //唯寫屬性:禁止，必須要有 get
-    //public int write {set; }
-    //value 指的是指定的值
-    private int _hp;
-    public int hp
-    {
-        get { return _hp; }
-        set { _hp = value; }
-    }
-    */
-
-    // <summary>
-    /// 跳躍按鍵
-    /// </summary>
-    // c# 7.0 存取子 可以使用 Lambda => 運算子
-    // 語法: get => { 程式區塊 } - 單行可省略大括號
-    private bool keyJump { get => Input.GetKeyDown(KeyCode.Space);}
-
-   
-
-
+    //跳躍按鍵
+    private bool keyJump { get => Input.GetKeyDown(KeyCode.Space); }
+    //屬性音量
+    private float volumeRandom{ get => Random.Range(0.7f, 1.2f); }
     #endregion
 
     #region  方法 Method
-    // 摺疊 ctrl + M O
-    // 展開 ctrl + M L
     /// <summary>
     /// 移動
     /// </summary>
     /// <param name="speedMove">移動速度</param>
     private void Move(float speedMove)
     {
-        // 請取消 Animator 屬性 Apply Root Motion:勾選時使用動畫位移資訊
-        // 剛體的加速度 = 三維向量 - 加速度用來控制剛體三個軸向的運動速度
-        // 前方 * 輸入值 * 移動速度
-        //使用前後左右軸向運動並保持原本的地心引力
         rig.velocity = 
             Vector3.forward * MoveInput("Vertical") * speedMove+
             Vector3.right * MoveInput("Horizontal") * speedMove+
@@ -153,15 +66,6 @@ public class ThirdPersonController : MonoBehaviour
         return Input.GetAxis(axisName);
     }
 
-
-    //定義與實作較複雜程式的區塊，功能
-    //方法語法:修飾詞 傳回資料類型 方法名稱 (參數1....參數N) { 程式區塊 }
-    //常用回傳類型 : 無傳回 void - 此方法沒有傳回資料
-    //格式化 : Ctrl + K + D (可整理排版)
-    //自訂方法:
-    //自訂方法需要被呼叫才會執行方法內的程式
-    //名稱顏色為淡黃色 - 沒有被呼叫
-    //名稱顏色為亮黃色 - 有被呼叫
     private  void Test()
     {
         print("我是自訂方法~");
@@ -172,9 +76,6 @@ public class ThirdPersonController : MonoBehaviour
         return 999;
     }
 
-    //參數語法 : 資料類型 參數名稱
-    //有預設值的參數可以不輸入引數,選填式參數
-    //※選填式參數只能放在()右邊
     private void Skill (int damage, string effect = "灰塵特效", string sound = "嘎嘎嘎")
     {
         print("參數版本 - 傷害值:" + damage);
@@ -207,20 +108,7 @@ public class ThirdPersonController : MonoBehaviour
         print("傷害值:" + 200);
         print("技能特效");
     }
-    // ※ 非必要但很重要
-    //BMI = 體重 / 身高 * 身高 (公尺)
-    /// <summary>
-    /// 計算 BMI 方法
-    /// </summary>
-    /// <param name="weight">體重 單位為公斤</param>
-    /// <param name="height">身高 單位為公尺</param>
-    /// <param name="name">名稱 測試者名稱</param>
-    /// <returns>BMI 結果</returns>
-    private float BMI(float weight, float height, string name = "測試")
-    {
-        print(name + "的 BMI");
-        return weight / (height * height);
-    }
+
     #endregion
 
     public GameObject playerObject;
@@ -241,7 +129,8 @@ public class ThirdPersonController : MonoBehaviour
             checkGroundRadius, 1 << 3);
 
         //print("球體碰到的第一個物件:" + hits[0].name);
-
+        //如果 尚未落地 並且 落地碰撞陣列大於 0 就 撥放一次音效
+        if (!isGrounded && hits.Length > 0) aud.PlayOneShot(soundGround, volumeRandom);
         isGrounded = hits.Length > 0;
 
         //傳回 碰撞陣列數量 > 0 - 只要碰到指定圖層物件就代表在地面上
@@ -263,6 +152,7 @@ public class ThirdPersonController : MonoBehaviour
             //剛體.添加推力(此物件的上方 * 跳躍);
             //宜修翻譯:(給予方向 * 力道(jump已 public int 在欄位))
             rig.AddForce(transform.up * jump);
+            aud.PlayOneShot(soundJump, Random.Range(0.7f, 1.5f));
         }
     }
 
@@ -299,6 +189,7 @@ public class ThirdPersonController : MonoBehaviour
         ani.SetBool(animatorParIsGrounded, isGrounded);
         // 如果 按下 跳躍鍵 就 設定跳躍觸發參數
         // 判斷式 只有一行敘述(只有一個分號)可以省略 大括號
+        if (keyJump) ani.SetTrigger(animatorParJump);
     }
 
     #region  事件 Event
@@ -306,7 +197,6 @@ public class ThirdPersonController : MonoBehaviour
     //開始事件:遊戲開始時執行一次_處裏初始化，取的資料等等
     private void Start()
     {
-        print(BMI(61, 1.75f, "Rocky"));
 
         Skill100();
         Skill200();
@@ -317,15 +207,6 @@ public class ThirdPersonController : MonoBehaviour
         //有多個選填式參數時可使用指名參數語法:參數名稱:值
         Skill(500, sound: "咻咻咻");
 
-        #region 輸出 方法
-        /*
-        print("哈囉，沃德~");
-
-        Debug.Log("一般訊息");
-        Debug.LogWarning("警告訊息");
-        Debug.LogError("錯誤訊息");
-       */
-        #endregion
 
         #region 屬性練習
         /*
