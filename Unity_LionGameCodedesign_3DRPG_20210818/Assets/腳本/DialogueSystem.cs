@@ -19,9 +19,10 @@ public class DialogueSystem : MonoBehaviour
     /// <summary>
     /// 開始對話
     /// </summary>
-    public void Dialogue()
+    public void Dialogue(DataDialogue data)
     {
-        StartCoroutine(SwitchDialogueGroup());        //啟動協同程序
+        StartCoroutine(SwitchDialogueGroup());    //啟動協同程序
+        StartCoroutine(ShowDialogueContent(data));
     }
 
     private IEnumerator SwitchDialogueGroup()
@@ -32,4 +33,17 @@ public class DialogueSystem : MonoBehaviour
             yield return new WaitForSeconds(0.03f);   //等待時間
         }
     }
+
+    private IEnumerator ShowDialogueContent(DataDialogue data)
+    {
+        textContent.text = " ";
+        textName.text = " ";
+
+        for (int i = 0; i < data.beforeMission[0].Length; i++)
+        {
+            textContent.text += data.beforeMission[0][i];
+            yield return new WaitForSeconds(dialogueInterval);
+        }
+    }
+
 }
