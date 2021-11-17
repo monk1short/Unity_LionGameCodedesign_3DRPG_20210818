@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5defdd8b5c5c0f47a3764d7b1794156, type: 3}
   m_Name: "NPC \u5C0D\u8A71\u8CC7\u6599"
   m_EditorClassIdentifier: 
+  nameDialogue: "\u5C0F\u5C41\u86CB"
   beforeMission:
   - "\u55E8\uFF0C\u4F60\u597D"
   - "\u8ACB\u554F\u53EF\u4EE5\u5E6B\u6211\u89E3\u6C7A\u5728\u6751\u5B50\u5167\u6417\u4E82\u7684\u602A\u7269\u55CE\uFF1F"
@@ -22,3 +23,4 @@ MonoBehaviour:
   - "\u606D\u559C\u4F60\u89E3\u6C7A\u73A9\u4E86"
   - "\u611F\u8B1D\u4F60~"
   countNeed: 0
+  stateNPCMission: 0
