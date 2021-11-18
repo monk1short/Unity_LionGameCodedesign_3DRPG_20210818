@@ -76,7 +76,16 @@ public class Enemy : MonoBehaviour
 
         #region 攻擊碰撞判定區域
         Gizmos.color = new Color(0.8f, 0.2f, 0.7f, 0.3f);
-        Gizmos.DrawCube(transform.position + v3AttackOffset, v3AttackSize);
+
+        // 繪製方形 . 需要跟著腳色旋轉時請使用 matrix 指定座標角度與尺寸
+        Gizmos.matrix = Matrix4x4.TRS(
+            transform.position +
+            transform.right * v3AttackOffset.x +
+            transform.up * v3AttackOffset.y +
+            transform.forward * v3AttackOffset.z,
+            transform.rotation, transform.localScale);
+
+        Gizmos.DrawCube(Vector3.zero, v3AttackSize);
         #endregion 
     }
     #endregion 
@@ -231,6 +240,12 @@ public class Enemy : MonoBehaviour
         if (nma.remainingDistance <= rangeAttack) state = StateEnemy.Attack;     
     }
 
+    [Header("攻擊時間"), Range(0, 5)]
+    public float timeAttack = 2.5f;
+    
+    private string parameterAttack = "攻擊觸發";
+    private bool isAttack;
+
     /// <summary>
     /// 攻擊玩家
     /// </summary>
@@ -241,6 +256,23 @@ public class Enemy : MonoBehaviour
         nma.SetDestination(traPlayer.position);
 
         if (nma.remainingDistance > rangeAttack) state = StateEnemy.Track;
+
+        if (isAttack) return;
+
+
+        ani.SetTrigger(parameterAttack);
+
+        // 物理 盒形碰撞(中心點.一半尺寸.角度.圖層)
+        Collider[] hits = Physics.OverlapBox(
+            transform.position +
+            transform.right * v3AttackOffset.x +
+            transform.up * v3AttackOffset.y +
+            transform.forward * v3AttackOffset.z,
+            v3AttackSize / 2, Quaternion.identity, 1 << 6);
+
+        if (hits.Length > 0) print("攻擊到的物件:" + hits[0].name);
+
+        isAttack = true;
     }
     #endregion
 }
