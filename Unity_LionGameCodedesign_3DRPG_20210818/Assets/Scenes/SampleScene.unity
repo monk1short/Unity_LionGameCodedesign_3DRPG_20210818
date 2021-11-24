@@ -6377,6 +6377,39 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &802098581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802098569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feacf85f77768964d92f96132f4f01cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 100
+  onHurt:
+    m_PersistentCalls:
+      m_Calls: []
+  onDead:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 802098582}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  parameterHurt: "\u53D7\u50B7\u89F8\u767C"
+  parameterDead: "\u6B7B\u4EA1\u958B\u95DC"
 --- !u!114 &802098582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6390,15 +6423,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2.5
-  attack: 35
+  attack: 25
   rangeAttack: 3.5
   rangeTrack: 10
   v2RandomWait: {x: 1, y: 5}
   v2RandomWalk: {x: 3, y: 7}
-  state: 0
   v3AttackOffset: {x: 0, y: 0.75, z: 2.2}
   v3AttackSize: {x: 2, y: 1.5, z: 2}
-  timeAttack: 2.5
+  state: 0
+  nameNPC: "NPC \u5C0F\u660E"
+  timeAttack: 3
   delaySendDamage: 0.5
   speedLookAt: 10
 --- !u!1 &904762535
@@ -7080,19 +7114,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.64685214
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7626155
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7100,7 +7134,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 99.391
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -7324,6 +7358,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1085073001}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   parameterHurt: "\u53D7\u50B7\u89F8\u767C"
   parameterDead: "\u6B7B\u4EA1\u958B\u95DC"
   imgHp: {fileID: 1886237119}
@@ -7332,6 +7378,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4296f97cc40b64240b45dee0e13ef0f3, type: 3}
   m_PrefabInstance: {fileID: 1085072993}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1085073001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1085072994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a8c409ddc5df045904d15510fa2a70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attack: 20
+  timeAttack: 1.3
+  delaySendDamage: 0.2
+  v3AttackOffset: {x: 0, y: 1, z: 1}
+  v3AttackSize: {x: 1.5, y: 1.5, z: 1.5}
+  parameterAttack: "\u653B\u64CA\u5716\u5C64\u89F8\u767C"
 --- !u!1 &1104087450
 GameObject:
   m_ObjectHideFlags: 0
@@ -7416,7 +7480,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100078, guid: 461413943bab6ef40aa2a33f18380180, type: 3}
       propertyPath: m_Name
-      value: free_male_1
+      value: "NPC \u5C0F\u660E"
       objectReference: {fileID: 0}
     - target: {fileID: 400078, guid: 461413943bab6ef40aa2a33f18380180, type: 3}
       propertyPath: m_RootOrder
@@ -11283,6 +11347,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 66ca9bf0145725543a1e8a693589f362, type: 3}
       propertyPath: m_Name
       value: "\u7532\u87F2"
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 66ca9bf0145725543a1e8a693589f362, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 66ca9bf0145725543a1e8a693589f362, type: 3}
       propertyPath: m_RootOrder

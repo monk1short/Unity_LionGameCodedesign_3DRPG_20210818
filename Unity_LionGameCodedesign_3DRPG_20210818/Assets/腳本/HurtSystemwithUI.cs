@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 /// <summary>
 /// 包含介面的受傷系統
@@ -16,13 +17,16 @@ public class HurtSystemwithUI : HurtSystem
     private float hpEffectOriginal;
 
     // 複寫父類別成員 override
-    public override void Hurt(float damage)
+    public override bool Hurt(float damage)
     {
+        hpEffectOriginal = hp;
+        
         // 該成員的父類別基底 父類別內的內容
         base.Hurt(damage);
 
         StartCoroutine(HpBarEffect());
-        //imgHp.fillAmount = hp / hpMax;
+
+        return hp <= 0;
     }
 
     /// <summary>

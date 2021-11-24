@@ -23,6 +23,10 @@ public class NPC : MonoBehaviour
     [Header("癸杠╰参")]
     public DialogueSystem dialogueSystem;
 
+    /// <summary>
+    /// ヘ玡ヴ叭计秖
+    /// </summary>
+    private int countCurrent;
 
     private void OnDrawGizmos()
     {
@@ -76,6 +80,17 @@ public class NPC : MonoBehaviour
             dialogueSystem.Dialogue(dataDialogue);
         }
         else if (!CheckPlayer()) dialogueSystem.StopDialogue();
+    }
+
+    /// <summary>
+    /// 穝ヴ叭惠―计秖
+    /// </summary>
+    public void UpdateMissionCount()
+    {
+        countCurrent++;
+
+        // ヘ玡计秖 单 惠―计秖 篈 单 ЧΘヴ叭
+        if (countCurrent == dataDialogue.countNeed) dataDialogue.stateNPCMission = StateNPCMission.AfterMission;
     }
     #endregion
 

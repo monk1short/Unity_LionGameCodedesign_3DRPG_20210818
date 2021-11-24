@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+
 /// <summary>
 /// 敵人行為
 /// 敵人狀態:等待、走路、追蹤、攻擊、受傷、死亡
@@ -21,6 +22,9 @@ public class Enemy : MonoBehaviour
     public Vector2 v2RandomWait = new Vector2(1f, 5f);
     [Header("走路隨機秒數")]
     public Vector2 v2RandomWalk = new Vector2(3, 7);
+    [Header("攻擊區域位移與尺寸")]
+    public Vector3 v3AttackOffset;
+    public Vector3 v3AttackSize = Vector3.one;
 
     #endregion
 
@@ -53,10 +57,6 @@ public class Enemy : MonoBehaviour
     }
     #endregion
 
-    [Header("攻擊區域位移與尺寸")]
-    public Vector3 v3AttackOffset;
-    public Vector3 v3AttackSize = Vector3.one;
-
     #region 繪製圖形
     private void OnDrawGizmos()
     {
@@ -88,19 +88,31 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawCube(Vector3.zero, v3AttackSize);
         #endregion 
     }
-    #endregion 
+    #endregion
 
     #region 事件
     private Transform traPlayer;
     private string namePlayer = "跩男";
+
+    [Header("NPC名稱")]
+    public string nameNPC = "NPC 小明";
+
+    private NPC npc;
+    private HurtSystem hurtSystem;
 
     private void Awake()
     {
         ani = GetComponent<Animator>();
         nma = GetComponent<NavMeshAgent>();
         nma.speed = speed;
+        hurtSystem = GetComponent<HurtSystem>();
 
         traPlayer = GameObject.Find(namePlayer).transform;
+        npc = GameObject.Find(nameNPC).GetComponent<NPC>();
+
+        // 受傷系統 - 死亡事件觸發時 請 NPC 更新數量
+        // AddListener(方法) 添加監視器(方法)
+        hurtSystem.onDead.AddListener(npc.UpdateMissionCount);
 
         nma.SetDestination(transform.position);       // 導覽器 一開始就先啟動
     }
@@ -145,7 +157,7 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void Idle()
     {
-        if (playerInTrackRange) state = StateEnemy.Track;       // 如果 玩家進入 追蹤範圍 就切為追蹤狀態
+        if (!targetIsDead && playerInTrackRange) state = StateEnemy.Track;       // 如果 玩家進入 追蹤範圍 就切為追蹤狀態
         #region 進入條件
         if (isIdle) return;
 
@@ -172,14 +184,12 @@ public class Enemy : MonoBehaviour
         #endregion 
     }
 
-
-
     /// <summary>
     /// 走路:隨機秒數後進入等待狀態
     /// </summary>
     private void Walk()
     {
-        if (playerInTrackRange) state = StateEnemy.Track;       // 如果 玩家進入 追蹤範圍 就切為追蹤狀態
+        if (!targetIsDead && playerInTrackRange) state = StateEnemy.Track;       // 如果 玩家進入 追蹤範圍 就切為追蹤狀態
 
         nma.SetDestination(v3RandomWalkFinal);                              // 代理器.設定目的地(座標)
         ani.SetBool(parameterIdleWalk, nma.remainingDistance > 0.05f);       // 走路動畫 - 離目的地距離大於 0.1 時走路
@@ -268,6 +278,9 @@ public class Enemy : MonoBehaviour
 
         StartCoroutine(DelaySendDamageToTarget());       // 啟動延遲傳送傷害給目標協程
     }
+
+    private bool targetIsDead;
+
     /// <summary>
     /// 延遲傳送傷害給目標
     /// </summary>
@@ -284,7 +297,8 @@ public class Enemy : MonoBehaviour
         transform.forward* v3AttackOffset.z,
         v3AttackSize / 2, Quaternion.identity, 1 << 6);
 
-        if (hits.Length > 0) hits[0].GetComponent<HurtSystem>().Hurt(attack);
+        if (hits.Length > 0) targetIsDead = hits[0].GetComponent<HurtSystem>().Hurt(attack);
+        if (targetIsDead) TargetDead();
 
         float waitToNextAttack = timeAttack - delaySendDamage;      // 計算剩餘冷卻時間
 
@@ -293,6 +307,16 @@ public class Enemy : MonoBehaviour
         isAttack = false;                                           // 恢復 攻擊狀態
     }
 
+    /// <summary>
+    /// 目標死亡
+    /// </summary>
+    private void TargetDead()
+    {
+        state = StateEnemy.Walk;
+        isIdle = false;
+        isWalk = false;
+        nma.isStopped = false;
+    }
     #endregion
 
     [Header("面向玩家速度"), Range(0, 50)]
