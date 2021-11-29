@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// NPC╰参
@@ -22,6 +23,8 @@ public class NPC : MonoBehaviour
 
     [Header("癸杠╰参")]
     public DialogueSystem dialogueSystem;
+    [Header("ЧΘヴ叭ㄆン")]
+    public UnityEvent onFinish;
 
     /// <summary>
     /// ヘ玡ヴ叭计秖
@@ -109,9 +112,12 @@ public class NPC : MonoBehaviour
         countCurrent++;
 
         // ヘ玡计秖 单 惠―计秖 篈 单 ЧΘヴ叭
-        if (countCurrent == dataDialogue.countNeed) dataDialogue.stateNPCMission = StateNPCMission.AfterMission;
+        if (countCurrent == dataDialogue.countNeed)
+        {
+            dataDialogue.stateNPCMission = StateNPCMission.AfterMission;
+            onFinish.Invoke();
+        }
+        #endregion
+
     }
-    #endregion
-
-
 }
