@@ -34,6 +34,11 @@ public class NPC : MonoBehaviour
         Gizmos.DrawSphere(transform.position, checkPlayerRadius);
     }
 
+    private void Awake()
+    {
+        Initialize();
+    }
+
     private void Update()
     {
         goTip.SetActive(CheckPlayer());
@@ -42,11 +47,20 @@ public class NPC : MonoBehaviour
     }
 
     /// <summary>
+    /// 初始設定
+    /// 狀態恢復為任務前
+    /// </summary>
+    private void Initialize()
+    {
+        dataDialogue.stateNPCMission = StateNPCMission.BeforeMission;
+    }
+
+    /// <summary>
     /// 檢查玩家是否進入
     /// 進入後記錄變形資訊
     /// </summary>
     /// <returns> 玩家進入 傳回 true 否則 false </returns>
-    
+
     private bool CheckPlayer()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, checkPlayerRadius, 1 << 6);
@@ -72,18 +86,23 @@ public class NPC : MonoBehaviour
     /// <summary>
     /// 玩家進入範圍內 並且 按下指定按鍵 請對話系統執行 開始對話
     /// 玩家退出範圍外 停止對話
+    /// 判斷狀態:任務前、任務中、任務後
     /// </summary>
     private void StartDialogue()
     {
         if (CheckPlayer() && startDialogueKey)
         {
             dialogueSystem.Dialogue(dataDialogue);
+            
+            // 判斷 如果 NPC 在任務前 就將 狀態改為任務中
+            if (dataDialogue.stateNPCMission == StateNPCMission.BeforeMission)
+                dataDialogue.stateNPCMission = StateNPCMission.Missionning;
         }
         else if (!CheckPlayer()) dialogueSystem.StopDialogue();
     }
 
     /// <summary>
-    /// 更新任務需求數量
+    /// 更新任務需求數量 任務目標物件得到或死亡後處理
     /// </summary>
     public void UpdateMissionCount()
     {
